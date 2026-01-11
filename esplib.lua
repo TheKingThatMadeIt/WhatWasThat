@@ -63,7 +63,7 @@ local function GetHealth(Part)
     return 0,100
 end 
 
-getgenv().WatermelonESP = {
+getgenv().StorkenESP = {
     Components = {},
     Drawings = {},
     Utils = {
@@ -75,12 +75,12 @@ getgenv().WatermelonESP = {
     }
 }
 
-WatermelonESP.UpdateDrawingComponent = function(ComponentName, PropertyToUpdate, NewValue)
-    WatermelonESP.Components[ComponentName][PropertyToUpdate] = NewValue
+StorkenESP.UpdateDrawingComponent = function(ComponentName, PropertyToUpdate, NewValue)
+    StorkenESP.Components[ComponentName][PropertyToUpdate] = NewValue
 end 
 
-WatermelonESP.GetDrawingColor = function(Part, DefaultColor, TeamCheck)
-    local IsPlayerFriendly = WatermelonESP.Utils.IsFriendly(Part)
+StorkenESP.GetDrawingColor = function(Part, DefaultColor, TeamCheck)
+    local IsPlayerFriendly = StorkenESP.Utils.IsFriendly(Part)
 
     if TeamCheck == true and IsPlayerFriendly == true then 
         return Color3.fromRGB(135, 206, 235)
@@ -91,15 +91,15 @@ WatermelonESP.GetDrawingColor = function(Part, DefaultColor, TeamCheck)
     return DefaultColor  
 end
 
-WatermelonESP.Get2DPosition = function(Camera, PartPosition)
+StorkenESP.Get2DPosition = function(Camera, PartPosition)
     local MyCamera = GetCamera()
 
     local Vector, Visible = MyCamera:WorldToViewportPoint(PartPosition)
     return Vector3.new(Vector.X, Vector.Y, Vector.Z), Visible
 end
 
-WatermelonESP.CreateComponent = function(ComponentData)
-    WatermelonESP.Components[ComponentData.ComponentName] = {
+StorkenESP.CreateComponent = function(ComponentData)
+    StorkenESP.Components[ComponentData.ComponentName] = {
         ["Enabled"] = ComponentData.Enabled or false,
         ["TeamCheck"] = ComponentData.ESPMetaData.TeamCheck or false,
         ["ShowTracers"] = ComponentData.ESPMetaData.ShowTracers or false,
@@ -113,7 +113,7 @@ WatermelonESP.CreateComponent = function(ComponentData)
     }
 end 
 
-WatermelonESP.DestroyDrawing = function(DrawingType,DrawingToUpdate)
+StorkenESP.DestroyDrawing = function(DrawingType,DrawingToUpdate)
     if DrawingType == "Drawing" then 
         DrawingToUpdate.Visible = false
         DrawingToUpdate:Destroy()
@@ -123,14 +123,14 @@ WatermelonESP.DestroyDrawing = function(DrawingType,DrawingToUpdate)
     end
 end 
 
-WatermelonESP.RenderDrawing = function(DrawingType, ComponentMetaData, DrawingToUpdate, DrawingData)
+StorkenESP.RenderDrawing = function(DrawingType, ComponentMetaData, DrawingToUpdate, DrawingData)
     local MyCamera = GetCamera()
     local Part = DrawingData.Part 
 
     if Part ~= nil  and Part.Parent~=nil then        
         if DrawingType == "TracerLine" then
-            local DrawingColor = WatermelonESP.GetDrawingColor(Part, ComponentMetaData.TracerColor, ComponentMetaData.TeamCheck)
-            local To, Visible = WatermelonESP.Get2DPosition(MyCamera, Part.Position)
+            local DrawingColor = StorkenESP.GetDrawingColor(Part, ComponentMetaData.TracerColor, ComponentMetaData.TeamCheck)
+            local To, Visible = StorkenESP.Get2DPosition(MyCamera, Part.Position)
             local TracerLine = DrawingToUpdate[1]
 
             TracerLine.To = Vector2.new(To.X, To.Y)
@@ -139,9 +139,9 @@ WatermelonESP.RenderDrawing = function(DrawingType, ComponentMetaData, DrawingTo
               TracerLine.Visible = Visible        
         elseif DrawingType == "TracerText" then
          if Part~=nil and Part.Parent~=nil then  
-            local Distance = WatermelonESP.Utils.GetDistance(Part)
-            local DrawingColor = WatermelonESP.GetDrawingColor(Part, ComponentMetaData.TracerTextColor, ComponentMetaData.TeamCheck)
-            local To, Visible = WatermelonESP.Get2DPosition(MyCamera, Part.Position + Vector3.new(0,0,0)) 
+            local Distance = StorkenESP.Utils.GetDistance(Part)
+            local DrawingColor = StorkenESP.GetDrawingColor(Part, ComponentMetaData.TracerTextColor, ComponentMetaData.TeamCheck)
+            local To, Visible = StorkenESP.Get2DPosition(MyCamera, Part.Position + Vector3.new(0,0,0)) 
             local TracerText = DrawingToUpdate[1]
 
             TracerText.Position = Vector2.new(To.X, To.Y+25)
@@ -152,10 +152,10 @@ WatermelonESP.RenderDrawing = function(DrawingType, ComponentMetaData, DrawingTo
 
         elseif DrawingType == "CharacterBox" then
             if Part~=nil and Part.Parent~=nil and Part.Parent:FindFirstChild("HumanoidRootPart") and Part.Parent:FindFirstChild("Head")  then
-                local DrawingColor = WatermelonESP.GetDrawingColor(Part.Parent.HumanoidRootPart, ComponentMetaData.CharacterBoxColor, ComponentMetaData.TeamCheck)
-                local Health,MaxHealth = WatermelonESP.Utils.GetHealth(Part.Parent.HumanoidRootPart)
-                local RootTo, RootVisible = WatermelonESP.Get2DPosition(MyCamera, Part.Parent.HumanoidRootPart.Position)
-                local HeadTo, HeadVisible = WatermelonESP.Get2DPosition(MyCamera, Part.Parent.Head.Position + Vector3.new(0, 0.5, 0))  
+                local DrawingColor = StorkenESP.GetDrawingColor(Part.Parent.HumanoidRootPart, ComponentMetaData.CharacterBoxColor, ComponentMetaData.TeamCheck)
+                local Health,MaxHealth = StorkenESP.Utils.GetHealth(Part.Parent.HumanoidRootPart)
+                local RootTo, RootVisible = StorkenESP.Get2DPosition(MyCamera, Part.Parent.HumanoidRootPart.Position)
+                local HeadTo, HeadVisible = StorkenESP.Get2DPosition(MyCamera, Part.Parent.Head.Position + Vector3.new(0, 0.5, 0))  
                 local FeetPosition =  nil 
 
                 if Part.Parent and Part.Parent:FindFirstChild("LowerTorso") then 
@@ -165,7 +165,7 @@ WatermelonESP.RenderDrawing = function(DrawingType, ComponentMetaData, DrawingTo
                 end 
 
                 if FeetPosition~=nil then 
-                local FeetTo, FeetVisible = WatermelonESP.Get2DPosition(MyCamera, FeetPosition - Vector3.new(0, 3, 0))  
+                local FeetTo, FeetVisible = StorkenESP.Get2DPosition(MyCamera, FeetPosition - Vector3.new(0, 3, 0))  
 
                 local BoxHeight = math.abs(HeadTo.Y - FeetTo.Y)  
                 local BoxWidth = 2350 / RootTo.Z  
@@ -198,7 +198,7 @@ WatermelonESP.RenderDrawing = function(DrawingType, ComponentMetaData, DrawingTo
 
         elseif DrawingType == "Highlight" then 
             if Part~=nil and Part.Parent~=nil then  
-                local DrawingColor = WatermelonESP.GetDrawingColor(Part, ComponentMetaData.HighlightColor, ComponentMetaData.TeamCheck)
+                local DrawingColor = StorkenESP.GetDrawingColor(Part, ComponentMetaData.HighlightColor, ComponentMetaData.TeamCheck)
 
                 local Highlight = DrawingToUpdate[1]
                 
@@ -215,15 +215,15 @@ WatermelonESP.RenderDrawing = function(DrawingType, ComponentMetaData, DrawingTo
 end
 
 
-WatermelonESP.DrawESP = function(DrawingMetaData)
-    for i, v in pairs(WatermelonESP.Drawings) do 
+StorkenESP.DrawESP = function(DrawingMetaData)
+    for i, v in pairs(StorkenESP.Drawings) do 
         if v.DrawingIndex == DrawingMetaData.ESPMetaData.DrawingIndex then 
-            WatermelonESP.DestroyDrawing("Drawing",v.Drawings.TracerLine)
-            WatermelonESP.DestroyDrawing("Drawing",v.Drawings.TracerText)
-            WatermelonESP.DestroyDrawing("Drawing",v.Drawings.CharacterBox)
-            WatermelonESP.DestroyDrawing("Drawing",v.Drawings.HealthBarLine)
-            WatermelonESP.DestroyDrawing("Highlight",v.Drawings.Highlight)
-            WatermelonESP.Drawings[i] = nil 
+            StorkenESP.DestroyDrawing("Drawing",v.Drawings.TracerLine)
+            StorkenESP.DestroyDrawing("Drawing",v.Drawings.TracerText)
+            StorkenESP.DestroyDrawing("Drawing",v.Drawings.CharacterBox)
+            StorkenESP.DestroyDrawing("Drawing",v.Drawings.HealthBarLine)
+            StorkenESP.DestroyDrawing("Highlight",v.Drawings.Highlight)
+            StorkenESP.Drawings[i] = nil 
         end
     end 
     
@@ -269,9 +269,9 @@ WatermelonESP.DrawESP = function(DrawingMetaData)
     CharacterHighlight.OutlineTransparency = 0 
     CharacterHighlight.Enabled = false 
     CharacterHighlight.Name = "Part"
-    WatermelonESP.Utils.ProtectGui(CharacterHighlight)
+    StorkenESP.Utils.ProtectGui(CharacterHighlight)
     
-    WatermelonESP.Drawings[DrawingMetaData.DrawingIndex] = {
+    StorkenESP.Drawings[DrawingMetaData.DrawingIndex] = {
         ["ComponentName"] = DrawingMetaData.ComponentName,
         ["DrawingIndex"] = DrawingMetaData.DrawingIndex,
         ["Drawings"] = {
@@ -285,24 +285,24 @@ WatermelonESP.DrawESP = function(DrawingMetaData)
     }
 end
 
-WatermelonESP.UpdateESPDrawings = function()      
-    for i, v in pairs(WatermelonESP.Drawings) do
+StorkenESP.UpdateESPDrawings = function()      
+    for i, v in pairs(StorkenESP.Drawings) do
         if not v.DrawingIndex or not v.DrawingIndex:IsDescendantOf(noobworkspace) then
-            WatermelonESP.DestroyDrawing("Drawing",v.Drawings.TracerLine)
-            WatermelonESP.DestroyDrawing("Drawing",v.Drawings.TracerText)
-            WatermelonESP.DestroyDrawing("Drawing",v.Drawings.CharacterBox)
-            WatermelonESP.DestroyDrawing("Drawing",v.Drawings.HealthBarLine)
-            WatermelonESP.DestroyDrawing("Highlight",v.Drawings.Highlight)
-            WatermelonESP.Drawings[i] = nil 
+            StorkenESP.DestroyDrawing("Drawing",v.Drawings.TracerLine)
+            StorkenESP.DestroyDrawing("Drawing",v.Drawings.TracerText)
+            StorkenESP.DestroyDrawing("Drawing",v.Drawings.CharacterBox)
+            StorkenESP.DestroyDrawing("Drawing",v.Drawings.HealthBarLine)
+            StorkenESP.DestroyDrawing("Highlight",v.Drawings.Highlight)
+            StorkenESP.Drawings[i] = nil 
         else
-            local ComponentDataFound = WatermelonESP.Components[v.ComponentName]
+            local ComponentDataFound = StorkenESP.Components[v.ComponentName]
             local RenderDistance = ComponentDataFound.RenderDistance
 
             if ComponentDataFound and ComponentDataFound.Enabled == true then
                 if ComponentDataFound.ShowTracers and v.ESPMetaData.Tracer and v.ESPMetaData.Tracer.Part and v.ESPMetaData.Tracer.Part.Parent~=nil then
-                    local Distance = WatermelonESP.Utils.GetDistance(v.ESPMetaData.Tracer.Part)
+                    local Distance = StorkenESP.Utils.GetDistance(v.ESPMetaData.Tracer.Part)
                     if Distance<=RenderDistance then 
-                       WatermelonESP.RenderDrawing("TracerLine", ComponentDataFound,{v.Drawings.TracerLine}, v.ESPMetaData.Tracer)
+                       StorkenESP.RenderDrawing("TracerLine", ComponentDataFound,{v.Drawings.TracerLine}, v.ESPMetaData.Tracer)
                     else
                         v.Drawings.TracerLine.Visible = false 
                     end
@@ -311,9 +311,9 @@ WatermelonESP.UpdateESPDrawings = function()
                 end
                 
                 if v.ESPMetaData.TracerText and v.ESPMetaData.TracerText.Part and  v.ESPMetaData.TracerText.Part.Parent~=nil then
-                    local Distance = WatermelonESP.Utils.GetDistance(v.ESPMetaData.TracerText.Part)
+                    local Distance = StorkenESP.Utils.GetDistance(v.ESPMetaData.TracerText.Part)
                     if Distance<=RenderDistance then 
-                      WatermelonESP.RenderDrawing("TracerText", ComponentDataFound,{v.Drawings.TracerText}, v.ESPMetaData.TracerText)
+                      StorkenESP.RenderDrawing("TracerText", ComponentDataFound,{v.Drawings.TracerText}, v.ESPMetaData.TracerText)
                     else
                         v.Drawings.TracerText.Visible = false 
                     end
@@ -322,10 +322,10 @@ WatermelonESP.UpdateESPDrawings = function()
                 end
 
                 if ComponentDataFound.ShowCharacterBox == true and v.ESPMetaData.CharacterBox and v.ESPMetaData.CharacterBox.Part and v.ESPMetaData.CharacterBox.Part.Parent~=nil and v.ESPMetaData.CharacterBox.Part.Parent:FindFirstChild("HumanoidRootPart")  then
-                    local Distance = WatermelonESP.Utils.GetDistance(v.ESPMetaData.CharacterBox.Part)
-                    local Health,MaxHealth = WatermelonESP.Utils.GetHealth(v.ESPMetaData.CharacterBox.Part.Parent.HumanoidRootPart)
+                    local Distance = StorkenESP.Utils.GetDistance(v.ESPMetaData.CharacterBox.Part)
+                    local Health,MaxHealth = StorkenESP.Utils.GetHealth(v.ESPMetaData.CharacterBox.Part.Parent.HumanoidRootPart)
                     if Distance<=RenderDistance and Health>0 then 
-                    WatermelonESP.RenderDrawing("CharacterBox", ComponentDataFound,{v.Drawings.CharacterBox,v.Drawings.HealthBarLine}, v.ESPMetaData.CharacterBox)
+                    StorkenESP.RenderDrawing("CharacterBox", ComponentDataFound,{v.Drawings.CharacterBox,v.Drawings.HealthBarLine}, v.ESPMetaData.CharacterBox)
                     else
                         v.Drawings.CharacterBox.Visible = false 
                         v.Drawings.HealthBarLine.Visible = false 
@@ -336,9 +336,9 @@ WatermelonESP.UpdateESPDrawings = function()
                 end
 
                 if ComponentDataFound.ShowHighlight == true and v.ESPMetaData.Highlight and v.ESPMetaData.Highlight.Part and v.ESPMetaData.Highlight.Part.Parent~=nil then
-                    local Distance = WatermelonESP.Utils.GetDistance(v.ESPMetaData.Highlight.Part)
+                    local Distance = StorkenESP.Utils.GetDistance(v.ESPMetaData.Highlight.Part)
                     if Distance<=RenderDistance then 
-                    WatermelonESP.RenderDrawing("Highlight", ComponentDataFound,{v.Drawings.Highlight}, v.ESPMetaData.Highlight)
+                    StorkenESP.RenderDrawing("Highlight", ComponentDataFound,{v.Drawings.Highlight}, v.ESPMetaData.Highlight)
                     else 
                         v.Drawings.Highlight.Enabled = false
                     end
@@ -348,12 +348,12 @@ WatermelonESP.UpdateESPDrawings = function()
 
 
             else
-                WatermelonESP.DestroyDrawing("Drawing",v.Drawings.TracerLine)
-                WatermelonESP.DestroyDrawing("Drawing",v.Drawings.TracerText)
-                WatermelonESP.DestroyDrawing("Drawing",v.Drawings.CharacterBox)
-                WatermelonESP.DestroyDrawing("Drawing",v.Drawings.HealthBarLine)
-                WatermelonESP.DestroyDrawing("Highlight",v.Drawings.Highlight)
-                WatermelonESP.Drawings[i] = nil 
+                StorkenESP.DestroyDrawing("Drawing",v.Drawings.TracerLine)
+                StorkenESP.DestroyDrawing("Drawing",v.Drawings.TracerText)
+                StorkenESP.DestroyDrawing("Drawing",v.Drawings.CharacterBox)
+                StorkenESP.DestroyDrawing("Drawing",v.Drawings.HealthBarLine)
+                StorkenESP.DestroyDrawing("Highlight",v.Drawings.Highlight)
+                StorkenESP.Drawings[i] = nil 
             end 
         end
     end
@@ -362,7 +362,7 @@ end
 
 task.spawn(function()
     RunService.RenderStepped:Connect(function()
-        WatermelonESP.UpdateESPDrawings()
+        StorkenESP.UpdateESPDrawings()
     end)
 end)
 
@@ -370,4 +370,4 @@ end)
 
 
 
---WatermelonESP.UpdateDrawingComponent("Players", "ShowHighLight", false)
+--StorkenESP.UpdateDrawingComponent("Players", "ShowHighLight", false)
